@@ -1,4 +1,8 @@
 steps:
+  # Step 0 — Build JAR using Maven
+  - name: 'gcr.io/cloud-builders/mvn'
+    args: ['clean', 'package', '-DskipTests']
+
   # Step 1 — Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/springboot-app', '.']
@@ -12,17 +16,15 @@ steps:
     entrypoint: gcloud
     args:
       [
-        'run',
-        'deploy',
-        'springboot-app',
-        '--image',
-        'gcr.io/$PROJECT_ID/springboot-app',
-        '--platform',
-        'managed',
-        '--region',
-        'asia-south1',
+        'run', 'deploy', 'springboot-app',
+        '--image', 'gcr.io/$PROJECT_ID/springboot-app',
+        '--platform', 'managed',
+        '--region', 'asia-south1',
         '--allow-unauthenticated'
       ]
 
 images:
   - 'gcr.io/$PROJECT_ID/springboot-app'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
